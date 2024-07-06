@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anotador de Perguntas - Grupo de Estudos Bíblicos</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Firebase Compat Libraries -->
     <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore-compat.js"></script>
@@ -19,6 +20,11 @@
             <button id="logout-btn">Logout</button>
         </div>
         <button id="google-login-btn">Login com Google</button>
+        <div class="theme-switcher">
+            <i class="fas fa-sun"></i>
+            <input type="checkbox" id="theme-toggle">
+            <i class="fas fa-moon"></i>
+        </div>
         <form id="question-form" style="display: none;">
             <input type="text" id="question-input" placeholder="Digite sua pergunta aqui" required>
             <select id="category-select">

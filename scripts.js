@@ -1,21 +1,3 @@
-// scripts.js
-// Import the functions you need from the SDKs you need
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-// // TODO: Add SDKs for Firebase products that you want to use
-// // https://firebase.google.com/docs/web/setup#available-libraries
-
-// // Your web app's Firebase configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyB85kPko242u5fRrX-bfoLFGmPs-6KQIgs",
-//   authDomain: "anotadorperguntas.firebaseapp.com",
-//   projectId: "anotadorperguntas",
-//   storageBucket: "anotadorperguntas.appspot.com",
-//   messagingSenderId: "991153329843",
-//   appId: "1:991153329843:web:c1c134d16ff053d88302c6"
-// };
-
-// scripts.js
-
 // Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyB85kPko242u5fRrX-bfoLFGmPs-6KQIgs",
@@ -32,6 +14,19 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    const themeToggle = document.getElementById('theme-toggle');
+    const userTheme = localStorage.getItem('theme') || 'light';
+    
+    document.body.classList.toggle('dark-mode', userTheme === 'dark');
+    themeToggle.checked = userTheme === 'dark';
+    
+    themeToggle.addEventListener('change', () => {
+        const isDarkMode = themeToggle.checked;
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+    });
+    
     const questionForm = document.getElementById('question-form');
     const questionInput = document.getElementById('question-input');
     const categorySelect = document.getElementById('category-select');
@@ -111,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Editar';
+                editButton.classList.add('edit-button'); // Adiciona a classe edit-button
                 editButton.addEventListener('click', () => {
                     showEditForm(doc.id, data.question, data.category);
                 });

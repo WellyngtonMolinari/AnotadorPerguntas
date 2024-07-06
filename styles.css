@@ -2,9 +2,19 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
     margin: 0;
     padding: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.light-mode {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+body.dark-mode {
+    background-color: #333;
+    color: #f5f5f5;
 }
 
 .container {
@@ -14,11 +24,16 @@ body {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+body.dark-mode .container {
+    background-color: #444;
 }
 
 h1 {
     text-align: center;
-    color: #333;
+    color: inherit;
 }
 
 form {
@@ -32,6 +47,13 @@ input[type="text"] {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+body.dark-mode input[type="text"] {
+    background-color: #555;
+    color: #f5f5f5;
+    border-color: #666;
 }
 
 button {
@@ -41,6 +63,7 @@ button {
     color: white;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -60,6 +83,11 @@ li {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+body.dark-mode li {
+    background-color: #555;
 }
 
 li button {
@@ -69,8 +97,67 @@ li button {
     padding: 5px 10px;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 li button:hover {
     background-color: #c82333;
+}
+
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.theme-switcher i {
+    font-size: 1.2em;
+    margin: 0 10px;
+}
+
+#theme-toggle {
+    appearance: none;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#theme-toggle:checked {
+    background-color: #28a745;
+}
+
+#theme-toggle::before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.3s ease;
+}
+
+#theme-toggle:checked::before {
+    transform: translateX(20px);
+}
+
+/* Adicionando estilo para o botão "Editar" */
+.edit-button {
+    background-color: #007bff; /* Cor azul */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #0056b3;
 }
