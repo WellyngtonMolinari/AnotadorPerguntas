@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anotador de Perguntas - Grupo de Estudos Bíblicos</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase Compat Libraries -->
+    <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore-compat.js"></script>
+    <script defer src="scripts.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Anotador de Perguntas - Grupo de Estudos Bíblicos</h1>
+        <form id="question-form">
+            <input type="text" id="user-name" placeholder="Seu nome" required>
+            <input type="text" id="question-input" placeholder="Digite sua pergunta aqui" required>
+            <select id="category-select">
+                <option value="Geral">Geral</option>
+                <option value="Antigo Testamento">Antigo Testamento</option>
+                <option value="Novo Testamento">Novo Testamento</option>
+                <option value="Doutrina">Doutrina</option>
+                <option value="Outros">Outros</option>
+            </select>
+            <button type="submit">Adicionar Pergunta</button>
+        </form>
+        <h2>Perguntas</h2>
+        <select id="filter-select">
+            <option value="Todas">Todas</option>
+            <option value="Geral">Geral</option>
+            <option value="Antigo Testamento">Antigo Testamento</option>
+            <option value="Novo Testamento">Novo Testamento</option>
+            <option value="Doutrina">Doutrina</option>
+            <option value="Outros">Outros</option>
+        </select>
+        <ul id="questions-list"></ul>
+    </div>
+</body>
+</html>
