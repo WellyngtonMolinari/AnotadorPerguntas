@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const userContainer = document.createElement('div');
 
             const userAvatar = document.createElement('img');
-            userAvatar.src = data.userPhotoURL || 'default-avatar.png'; // Adicione uma imagem padrão caso não tenha um avatar
+            userAvatar.src = data.userPhotoURL || 'assets/defaultavatar.jpg'; // Adicione uma imagem padrão caso não tenha um avatar
             userAvatar.alt = `${data.userName}'s avatar`;
             userAvatar.classList.add('user-avatar');
             
