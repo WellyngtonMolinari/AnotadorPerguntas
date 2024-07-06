@@ -56,6 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Função para atualizar pergunta no Firestore
+    function updateQuestionInFirestore(docId, newQuestion, newCategory) {
+        db.collection('questions').doc(docId).update({
+            question: newQuestion,
+            category: newCategory,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            console.log('Pergunta atualizada com sucesso!');
+        }).catch((error) => {
+            console.error('Erro ao atualizar pergunta: ', error);
+        });
+    }
+
     // Função para exibir perguntas
     function displayQuestions(querySnapshot) {
         questionsList.innerHTML = '';
@@ -63,9 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = doc.data();
             const listItem = document.createElement('li');
             listItem.textContent = `${data.userName}: ${data.question} (${data.category})`;
+            listItem.setAttribute('data-doc-id', doc.id); // Adiciona o atributo data-doc-id com o docId do Firestore
 
-            // Adiciona o botão de remoção se o usuário é o dono da pergunta
+            // Adiciona o botão de remoção e edição se o usuário é o dono da pergunta
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Editar';
+                editButton.addEventListener('click', () => {
+                    showEditForm(doc.id, data.question, data.category);
+                });
+                listItem.appendChild(editButton);
+
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remover';
                 removeButton.addEventListener('click', () => {
@@ -79,6 +100,60 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             questionsList.appendChild(listItem);
+        });
+    }
+
+    // Função para mostrar o formulário de edição
+    function showEditForm(docId, currentQuestion, currentCategory) {
+        const editForm = document.createElement('form');
+        const editQuestionInput = document.createElement('input');
+        editQuestionInput.type = 'text';
+        editQuestionInput.value = currentQuestion;
+
+        const editCategorySelect = document.createElement('select');
+        ['Geral', 'Antigo Testamento', 'Novo Testamento', 'Doutrina', 'Outros'].forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            if (category === currentCategory) {
+                option.selected = true;
+            }
+            editCategorySelect.appendChild(option);
+        });
+
+        const saveButton = document.createElement('button');
+        saveButton.type = 'submit';
+        saveButton.textContent = 'Salvar';
+
+        const cancelButton = document.createElement('button');
+        cancelButton.type = 'button';
+        cancelButton.textContent = 'Cancelar';
+        cancelButton.addEventListener('click', () => {
+            editForm.remove();
+        });
+
+        editForm.appendChild(editQuestionInput);
+        editForm.appendChild(editCategorySelect);
+        editForm.appendChild(saveButton);
+        editForm.appendChild(cancelButton);
+
+        // Encontrar o listItem correspondente pelo docId e substituir pelo formulário de edição
+        const listItem = questionsList.querySelector(`li[data-doc-id="${docId}"]`);
+        if (listItem) {
+            listItem.innerHTML = ''; // Limpa o conteúdo atual do listItem
+            listItem.appendChild(editForm);
+        }
+
+        // Submeter a atualização da pergunta
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newQuestion = editQuestionInput.value.trim();
+            const newCategory = editCategorySelect.value;
+
+            if (newQuestion) {
+                updateQuestionInFirestore(docId, newQuestion, newCategory);
+                editForm.remove();
+            }
         });
     }
 
