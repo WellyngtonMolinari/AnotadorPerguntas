@@ -8,13 +8,18 @@
     <!-- Firebase Compat Libraries -->
     <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-firestore-compat.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth-compat.js"></script>
     <script defer src="scripts.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Anotador de Perguntas - Grupo de Estudos Bíblicos</h1>
-        <form id="question-form">
-            <input type="text" id="user-name" placeholder="Seu nome" required>
+        <div id="user-info">
+            <span id="user-name-display"></span>
+            <button id="logout-btn">Logout</button>
+        </div>
+        <button id="google-login-btn">Login com Google</button>
+        <form id="question-form" style="display: none;">
             <input type="text" id="question-input" placeholder="Digite sua pergunta aqui" required>
             <select id="category-select">
                 <option value="Geral">Geral</option>
