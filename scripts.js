@@ -69,6 +69,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Função para adicionar comentário ao Firestore
+    function addCommentToFirestore(docId, commentText, userId, userName) {
+        db.collection('questions').doc(docId).collection('comments').add({
+            comment: commentText,
+            userId: userId,
+            userName: userName,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            console.log('Comentário adicionado com sucesso!');
+        }).catch((error) => {
+            console.error('Erro ao adicionar comentário: ', error);
+        });
+    }
+
+    // Função para exibir comentários
+    function displayComments(docId, commentsList) {
+        db.collection('questions').doc(docId).collection('comments')
+            .orderBy('timestamp', 'asc')
+            .onSnapshot((querySnapshot) => {
+                commentsList.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const commentData = doc.data();
+                    const commentItem = document.createElement('li');
+                    commentItem.textContent = `${commentData.userName}: ${commentData.comment}`;
+                    commentsList.appendChild(commentItem);
+                });
+            });
+    }
+
     // Função para exibir perguntas
     function displayQuestions(querySnapshot) {
         questionsList.innerHTML = '';
@@ -98,6 +127,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 listItem.appendChild(removeButton);
             }
+
+            // Adiciona seção de comentários
+            const commentsSection = document.createElement('div');
+            const commentsList = document.createElement('ul');
+            const commentInput = document.createElement('input');
+            commentInput.type = 'text';
+            commentInput.placeholder = 'Digite seu comentário';
+            const commentButton = document.createElement('button');
+            commentButton.textContent = 'Comentar';
+
+            commentButton.addEventListener('click', () => {
+                const commentText = commentInput.value.trim();
+                if (commentText) {
+                    addCommentToFirestore(doc.id, commentText, auth.currentUser.uid, auth.currentUser.displayName);
+                    commentInput.value = '';
+                }
+            });
+
+            commentsSection.appendChild(commentsList);
+            commentsSection.appendChild(commentInput);
+            commentsSection.appendChild(commentButton);
+            listItem.appendChild(commentsSection);
+
+            // Exibe comentários
+            displayComments(doc.id, commentsList);
 
             questionsList.appendChild(listItem);
         });
