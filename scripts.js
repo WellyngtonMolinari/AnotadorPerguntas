@@ -37,12 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const googleLoginBtn = document.getElementById('google-login-btn');
 
     // Função para adicionar pergunta ao Firestore
-    function addQuestionToFirestore(question, category, userId, userName) {
+    function addQuestionToFirestore(question, category, userId, userName, userPhotoURL) {
         db.collection('questions').add({
             question: question,
             category: category,
             userId: userId,
             userName: userName,
+            userPhotoURL: userPhotoURL,
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
             console.log('Pergunta adicionada com sucesso!');
@@ -99,21 +100,46 @@ document.addEventListener('DOMContentLoaded', () => {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             const listItem = document.createElement('li');
-            listItem.textContent = `${data.userName}: ${data.question} (${data.category})`;
-            listItem.setAttribute('data-doc-id', doc.id); // Adiciona o atributo data-doc-id com o docId do Firestore
+
+            // Cabeçalho da pergunta com avatar e nome do usuário
+            const questionHeader = document.createElement('div');
+            questionHeader.classList.add('question-header');
+            
+            const userContainer = document.createElement('div');
+
+            const userAvatar = document.createElement('img');
+            userAvatar.src = data.userPhotoURL || 'default-avatar.png'; // Adicione uma imagem padrão caso não tenha um avatar
+            userAvatar.alt = `${data.userName}'s avatar`;
+            userAvatar.classList.add('user-avatar');
+            
+            const userName = document.createElement('span');
+            userName.textContent = `${data.userName}`;
+            userName.classList.add('user-name');
+
+            const questionText = document.createElement('span');
+            questionText.textContent = `: ${data.question} (${data.category})`;
+
+            userContainer.appendChild(userAvatar);
+            userContainer.appendChild(userName);
+            userContainer.appendChild(questionText);
+            questionHeader.appendChild(userContainer);
 
             // Adiciona o botão de remoção e edição se o usuário é o dono da pergunta
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
+                const buttonsContainer = document.createElement('div');
+                buttonsContainer.classList.add('question-buttons');
+                
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Editar';
-                editButton.classList.add('edit-button'); // Adiciona a classe edit-button
+                editButton.classList.add('edit-button');
                 editButton.addEventListener('click', () => {
                     showEditForm(doc.id, data.question, data.category);
                 });
-                listItem.appendChild(editButton);
+                buttonsContainer.appendChild(editButton);
 
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remover';
+                removeButton.classList.add('remove-button');
                 removeButton.addEventListener('click', () => {
                     db.collection('questions').doc(doc.id).delete().then(() => {
                         console.log('Pergunta removida com sucesso!');
@@ -121,17 +147,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error('Erro ao remover pergunta: ', error);
                     });
                 });
-                listItem.appendChild(removeButton);
+                buttonsContainer.appendChild(removeButton);
+
+                questionHeader.appendChild(buttonsContainer);
             }
+
+            listItem.appendChild(questionHeader);
 
             // Adiciona seção de comentários
             const commentsSection = document.createElement('div');
+            commentsSection.classList.add('comments-section');
             const commentsList = document.createElement('ul');
             const commentInput = document.createElement('input');
             commentInput.type = 'text';
             commentInput.placeholder = 'Digite seu comentário';
             const commentButton = document.createElement('button');
             commentButton.textContent = 'Comentar';
+            commentButton.classList.add('comment-button');
 
             commentButton.addEventListener('click', () => {
                 const commentText = commentInput.value.trim();
@@ -152,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
             questionsList.appendChild(listItem);
         });
     }
+
 
     // Função para mostrar o formulário de edição
     function showEditForm(docId, currentQuestion, currentCategory) {
@@ -226,9 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = categorySelect.value;
         const userId = auth.currentUser ? auth.currentUser.uid : null;
         const userName = auth.currentUser ? auth.currentUser.displayName : 'Anônimo';
+        const userPhotoURL = auth.currentUser ? auth.currentUser.photoURL : 'default-avatar.png';
 
         if (questionText && userId) {
-            addQuestionToFirestore(questionText, category, userId, userName);
+            addQuestionToFirestore(questionText, category, userId, userName, userPhotoURL);
 
             // Limpa os campos de entrada
             questionInput.value = '';
@@ -241,13 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
         loadQuestions(e.target.value);
     });
 
-    // Função para alternar a visibilidade dos formulários
+    // Atualização no toggleForms para incluir userPhotoURL
     function toggleForms(user) {
         if (user) {
             googleLoginBtn.style.display = 'none';
             questionForm.style.display = 'block';
             logoutBtn.style.display = 'block';
-            userNameDisplay.textContent = `Logado como: ${user.displayName} (${user.email})`;
+            userNameDisplay.innerHTML = `<img src="${user.photoURL}" alt="${user.displayName}'s avatar" class="user-avatar"> Logado como: ${user.displayName} (${user.email})`;
         } else {
             googleLoginBtn.style.display = 'block';
             questionForm.style.display = 'none';
