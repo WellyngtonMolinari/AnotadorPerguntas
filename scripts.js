@@ -101,37 +101,38 @@ document.addEventListener('DOMContentLoaded', () => {
         querySnapshot.forEach((doc) => {
             const data = doc.data();
             const listItem = document.createElement('li');
-
+            listItem.setAttribute('data-doc-id', doc.id); // Adiciona o data-doc-id
+    
             // Cabeçalho da pergunta com avatar e nome do usuário
             const questionHeader = document.createElement('div');
             questionHeader.classList.add('question-header');
-
+    
             const userAvatar = document.createElement('img');
-            userAvatar.src = data.userPhotoURL || 'assets/defaultavatar.jpg'; // Adicione uma imagem padrão caso não tenha um avatar
+            userAvatar.src = data.userPhotoURL || 'assets/defaultavatar.jpg';
             userAvatar.alt = `${data.userName}'s avatar`;
             userAvatar.classList.add('user-avatar');
-
+    
             const userName = document.createElement('span');
             userName.textContent = data.userName;
             userName.classList.add('user-name');
-
+    
             questionHeader.appendChild(userAvatar);
             questionHeader.appendChild(userName);
-
+    
             listItem.appendChild(questionHeader);
-
+    
             // Conteúdo da pergunta
             const questionContent = document.createElement('div');
             questionContent.classList.add('question-content');
             questionContent.textContent = `${data.question} (${data.category})`;
-
+    
             listItem.appendChild(questionContent);
-
+    
             // Adiciona o botão de remoção e edição se o usuário é o dono da pergunta
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
                 const buttonsContainer = document.createElement('div');
                 buttonsContainer.classList.add('question-buttons');
-
+    
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Editar';
                 editButton.classList.add('edit-button');
@@ -139,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showEditForm(doc.id, data.question, data.category);
                 });
                 buttonsContainer.appendChild(editButton);
-
+    
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remover';
                 removeButton.classList.add('remove-button');
@@ -151,10 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
                 buttonsContainer.appendChild(removeButton);
-
+    
                 listItem.appendChild(buttonsContainer);
             }
-
+    
             // Adiciona seção de comentários
             const commentsSection = document.createElement('div');
             commentsSection.classList.add('comments-section');
@@ -165,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const commentButton = document.createElement('button');
             commentButton.textContent = 'Comentar';
             commentButton.classList.add('comment-button');
-
+    
             commentButton.addEventListener('click', () => {
                 const commentText = commentInput.value.trim();
                 if (commentText) {
@@ -173,18 +174,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     commentInput.value = '';
                 }
             });
-
+    
             commentsSection.appendChild(commentsList);
             commentsSection.appendChild(commentInput);
             commentsSection.appendChild(commentButton);
             listItem.appendChild(commentsSection);
-
+    
             // Exibe comentários
             displayComments(doc.id, commentsList);
-
+    
             questionsList.appendChild(listItem);
         });
     }
+    
 
 
     // Função para mostrar o formulário de edição
@@ -193,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const editQuestionInput = document.createElement('input');
         editQuestionInput.type = 'text';
         editQuestionInput.value = currentQuestion;
-
+    
         const editCategorySelect = document.createElement('select');
         ['Geral', 'Antigo Testamento', 'Novo Testamento', 'Doutrina', 'Outros'].forEach(category => {
             const option = document.createElement('option');
@@ -204,42 +206,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             editCategorySelect.appendChild(option);
         });
-
+    
         const saveButton = document.createElement('button');
         saveButton.type = 'submit';
         saveButton.textContent = 'Salvar';
-
+    
         const cancelButton = document.createElement('button');
         cancelButton.type = 'button';
         cancelButton.textContent = 'Cancelar';
         cancelButton.addEventListener('click', () => {
-            editForm.remove();
+            loadQuestions(); // Recarrega as perguntas para restaurar a exibição original
         });
-
+    
         editForm.appendChild(editQuestionInput);
         editForm.appendChild(editCategorySelect);
         editForm.appendChild(saveButton);
         editForm.appendChild(cancelButton);
-
+    
         // Encontrar o listItem correspondente pelo docId e substituir pelo formulário de edição
         const listItem = questionsList.querySelector(`li[data-doc-id="${docId}"]`);
         if (listItem) {
             listItem.innerHTML = ''; // Limpa o conteúdo atual do listItem
             listItem.appendChild(editForm);
         }
-
+    
         // Submeter a atualização da pergunta
         editForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const newQuestion = editQuestionInput.value.trim();
             const newCategory = editCategorySelect.value;
-
+    
             if (newQuestion) {
                 updateQuestionInFirestore(docId, newQuestion, newCategory);
-                editForm.remove();
+                loadQuestions(); // Recarrega as perguntas após a atualização
             }
         });
     }
+    
 
     // Carregar perguntas do Firestore e aplicar filtro
     function loadQuestions(categoryFilter = 'Todas') {
