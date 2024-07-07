@@ -85,14 +85,111 @@ document.addEventListener('DOMContentLoaded', () => {
             .orderBy('timestamp', 'asc')
             .onSnapshot((querySnapshot) => {
                 commentsList.innerHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const commentData = doc.data();
+                querySnapshot.forEach((commentDoc) => {
+                    const commentData = commentDoc.data();
                     const commentItem = document.createElement('li');
+                    
+                    // Exibir o comentário com o nome do usuário
                     commentItem.textContent = `${commentData.userName}: ${commentData.comment}`;
+                    commentItem.setAttribute('data-comment-id', commentDoc.id); // Adiciona o identificador do comentário
+                    
+                    // Adicionar botões de edição e exclusão se o usuário é o autor do comentário
+                    if (auth.currentUser && auth.currentUser.uid === commentData.userId) {
+                        const buttonsContainer = document.createElement('div');
+                        buttonsContainer.style.display = 'flex';
+                        buttonsContainer.style.marginTop = '5px';
+    
+                        const editButton = document.createElement('button');
+                        editButton.textContent = 'Editar';
+                        editButton.classList.add('edit-button');
+                        editButton.style.marginRight = '10px';
+                        editButton.addEventListener('click', () => {
+                            showEditCommentForm(docId, commentDoc.id, commentData.comment);
+                        });
+                        buttonsContainer.appendChild(editButton);
+    
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Excluir';
+                        deleteButton.classList.add('remove-button');
+                        deleteButton.addEventListener('click', () => {
+                            deleteCommentFromFirestore(docId, commentDoc.id);
+                        });
+                        buttonsContainer.appendChild(deleteButton);
+    
+                        commentItem.appendChild(buttonsContainer);
+                    }
+    
                     commentsList.appendChild(commentItem);
                 });
             });
     }
+
+    // Deletar comentário
+    function deleteCommentFromFirestore(docId, commentId) {
+        db.collection('questions').doc(docId).collection('comments').doc(commentId).delete()
+            .then(() => {
+                console.log('Comentário removido com sucesso!');
+            })
+            .catch((error) => {
+                console.error('Erro ao remover comentário: ', error);
+            });
+    }
+    
+    // Função para Mostrar Formulário de Edição de Comentário
+    function showEditCommentForm(docId, commentId, currentComment) {
+        // Localizar o item da lista de comentários
+        const commentItem = document.querySelector(`li[data-comment-id="${commentId}"]`);
+    
+        if (commentItem) {
+            // Criar formulário de edição
+            const editForm = document.createElement('form');
+            const editCommentInput = document.createElement('input');
+            editCommentInput.type = 'text';
+            editCommentInput.value = currentComment;
+    
+            const saveButton = document.createElement('button');
+            saveButton.type = 'submit';
+            saveButton.textContent = 'Salvar';
+    
+            const cancelButton = document.createElement('button');
+            cancelButton.type = 'button';
+            cancelButton.textContent = 'Cancelar';
+            cancelButton.addEventListener('click', () => {
+                displayComments(docId, commentItem.parentElement); // Recarrega os comentários para restaurar a exibição original
+            });
+    
+            editForm.appendChild(editCommentInput);
+            editForm.appendChild(saveButton);
+            editForm.appendChild(cancelButton);
+    
+            // Substituir o conteúdo atual do item pelo formulário de edição
+            commentItem.innerHTML = '';
+            commentItem.appendChild(editForm);
+    
+            // Submeter a atualização do comentário
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newComment = editCommentInput.value.trim();
+    
+                if (newComment) {
+                    updateCommentInFirestore(docId, commentId, newComment);
+                }
+            });
+        }
+    }
+
+    // Função para Atualizar Comentários no Firestore
+    function updateCommentInFirestore(docId, commentId, newComment) {
+        db.collection('questions').doc(docId).collection('comments').doc(commentId).update({
+            comment: newComment,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).then(() => {
+            console.log('Comentário atualizado com sucesso!');
+        }).catch((error) => {
+            console.error('Erro ao atualizar comentário: ', error);
+        });
+    }
+    
 
     // Função para exibir perguntas
     function displayQuestions(querySnapshot) {
