@@ -205,6 +205,25 @@ body.dark-mode li {
     background-color: #e67300; /* Cor laranja mais escura */
 }
 
+/* CSS para Avatar */
+.comment-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.comment-text {
+    display: inline-block;
+    margin-left: 5px;
+}
+
 .theme-switcher {
     display: flex;
     align-items: center;

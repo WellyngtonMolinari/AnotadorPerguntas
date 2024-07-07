@@ -66,11 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Função para adicionar comentário ao Firestore
-    function addCommentToFirestore(docId, commentText, userId, userName) {
+    function addCommentToFirestore(docId, commentText, userId, userName, userPhotoURL) {
         db.collection('questions').doc(docId).collection('comments').add({
             comment: commentText,
             userId: userId,
             userName: userName,
+            userPhotoURL: userPhotoURL, // Adiciona a URL da foto do perfil
             timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }).then(() => {
             console.log('Comentário adicionado com sucesso!');
@@ -88,17 +89,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 querySnapshot.forEach((commentDoc) => {
                     const commentData = commentDoc.data();
                     const commentItem = document.createElement('li');
-                    
-                    // Exibir o comentário com o nome do usuário
-                    commentItem.textContent = `${commentData.userName}: ${commentData.comment}`;
+
+                    // Criar um contêiner para o comentário
+                    const commentContainer = document.createElement('div');
+                    commentContainer.classList.add('comment-container');
+
+                    // Adicionar a imagem do avatar
+                    const userAvatar = document.createElement('img');
+                    userAvatar.src = commentData.userPhotoURL || 'assets/defaultavatar.jpg';
+                    userAvatar.alt = `${commentData.userName}'s avatar`;
+                    userAvatar.classList.add('comment-avatar');
+
+                    // Adicionar o texto do comentário
+                    const commentText = document.createElement('div');
+                    commentText.classList.add('comment-text');
+                    commentText.textContent = `${commentData.userName}: ${commentData.comment}`;
+
+                    // Adicionar o avatar e o texto do comentário ao contêiner do comentário
+                    commentContainer.appendChild(userAvatar);
+                    commentContainer.appendChild(commentText);
+
+                    // Adicionar o contêiner do comentário ao item da lista
+                    commentItem.appendChild(commentContainer);
                     commentItem.setAttribute('data-comment-id', commentDoc.id); // Adiciona o identificador do comentário
-                    
+
                     // Adicionar botões de edição e exclusão se o usuário é o autor do comentário
                     if (auth.currentUser && auth.currentUser.uid === commentData.userId) {
                         const buttonsContainer = document.createElement('div');
                         buttonsContainer.style.display = 'flex';
                         buttonsContainer.style.marginTop = '5px';
-    
+
                         const editButton = document.createElement('button');
                         editButton.textContent = 'Editar';
                         editButton.classList.add('edit-button');
@@ -107,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             showEditCommentForm(docId, commentDoc.id, commentData.comment);
                         });
                         buttonsContainer.appendChild(editButton);
-    
+
                         const deleteButton = document.createElement('button');
                         deleteButton.textContent = 'Excluir';
                         deleteButton.classList.add('remove-button');
@@ -115,14 +135,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             deleteCommentFromFirestore(docId, commentDoc.id);
                         });
                         buttonsContainer.appendChild(deleteButton);
-    
+
                         commentItem.appendChild(buttonsContainer);
                     }
-    
+
                     commentsList.appendChild(commentItem);
                 });
             });
     }
+
 
     // Deletar comentário
     function deleteCommentFromFirestore(docId, commentId) {
@@ -265,14 +286,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 commentButton.textContent = 'Comentar';
                 commentButton.classList.add('comment-button');
     
+                // Dentro da função de adição de comentário
                 commentButton.addEventListener('click', () => {
                     const commentText = commentInput.value.trim();
                     if (commentText) {
-                        addCommentToFirestore(doc.id, commentText, auth.currentUser.uid, auth.currentUser.displayName);
+                        const userPhotoURL = auth.currentUser ? auth.currentUser.photoURL : 'assets/defaultavatar.jpg';
+                        addCommentToFirestore(doc.id, commentText, auth.currentUser.uid, auth.currentUser.displayName, userPhotoURL);
                         commentInput.value = '';
                     }
                 });
-    
+
                 commentsSection.appendChild(commentsList);
                 commentsSection.appendChild(commentInput);
                 commentsSection.appendChild(commentButton);
