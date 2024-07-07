@@ -300,9 +300,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const commentsSection = document.createElement('div');
                 commentsSection.classList.add('comments-section');
                 const commentsList = document.createElement('ul');
-                const commentInput = document.createElement('input');
+                const commentInput = document.createElement('textarea');
                 commentInput.type = 'text';
-                commentInput.placeholder = 'Digite seu comentário';
+                commentInput.placeholder = 'Digite seu comentário...';
+                // Ajustar dinamicamente a altura do textarea
+                commentInput.addEventListener('input', () => {
+                    commentInput.style.height = 'auto';
+                    commentInput.style.height = (commentInput.scrollHeight) + 'px';
+                });
                 const commentButton = document.createElement('button');
                 commentButton.textContent = 'Comentar';
                 commentButton.classList.add('comment-button');
