@@ -94,40 +94,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     const commentContainer = document.createElement('div');
                     commentContainer.classList.add('comment-container');
 
+                    // Cabeçalho do comentário
+                    const commentHeader = document.createElement('div');
+                    commentHeader.classList.add('comment-header');
+
                     // Adicionar a imagem do avatar
                     const userAvatar = document.createElement('img');
                     userAvatar.src = commentData.userPhotoURL || 'assets/defaultavatar.jpg';
                     userAvatar.alt = `${commentData.userName}'s avatar`;
                     userAvatar.classList.add('comment-avatar');
 
+                    // Nome do usuário
+                    const userName = document.createElement('span');
+                    userName.textContent = commentData.userName;
+                    userName.classList.add('comment-user-name');
+
+                    // Timestamp (opcional)
+                    const timestamp = commentData.timestamp ? commentData.timestamp.toDate().toLocaleString() : 'Data não disponível';
+                    const commentTimestamp = document.createElement('span');
+                    commentTimestamp.textContent = timestamp;
+                    commentTimestamp.classList.add('comment-timestamp');
+
+                    // Adicionar avatar, nome do usuário e timestamp ao cabeçalho
+                    commentHeader.appendChild(userAvatar);
+                    commentHeader.appendChild(userName);
+                    commentHeader.appendChild(commentTimestamp);
+
+                    // Adicionar o cabeçalho ao contêiner do comentário
+                    commentContainer.appendChild(commentHeader);
+
                     // Adicionar o texto do comentário
                     const commentText = document.createElement('div');
                     commentText.classList.add('comment-text');
-                    commentText.textContent = `${commentData.userName}: ${commentData.comment}`;
+                    commentText.textContent = commentData.comment;
 
-                    // Adicionar o avatar e o texto do comentário ao contêiner do comentário
-                    commentContainer.appendChild(userAvatar);
+                    // Adicionar o texto ao contêiner do comentário
                     commentContainer.appendChild(commentText);
-
-                    // Adicionar o contêiner do comentário ao item da lista
-                    commentItem.appendChild(commentContainer);
-                    commentItem.setAttribute('data-comment-id', commentDoc.id); // Adiciona o identificador do comentário
 
                     // Adicionar botões de edição e exclusão se o usuário é o autor do comentário
                     if (auth.currentUser && auth.currentUser.uid === commentData.userId) {
                         const buttonsContainer = document.createElement('div');
-                        buttonsContainer.style.display = 'flex';
-                        buttonsContainer.style.marginTop = '5px';
-
+                        buttonsContainer.classList.add('comment-options');
+        
                         const editButton = document.createElement('button');
                         editButton.textContent = 'Editar';
                         editButton.classList.add('edit-button');
-                        editButton.style.marginRight = '10px';
                         editButton.addEventListener('click', () => {
                             showEditCommentForm(docId, commentDoc.id, commentData.comment);
                         });
                         buttonsContainer.appendChild(editButton);
-
+        
                         const deleteButton = document.createElement('button');
                         deleteButton.textContent = 'Excluir';
                         deleteButton.classList.add('remove-button');
@@ -135,14 +151,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             deleteCommentFromFirestore(docId, commentDoc.id);
                         });
                         buttonsContainer.appendChild(deleteButton);
-
-                        commentItem.appendChild(buttonsContainer);
+        
+                        commentContainer.appendChild(buttonsContainer);
                     }
+
+                    // Adicionar o contêiner do comentário ao item da lista
+                    commentItem.appendChild(commentContainer);
+                    commentItem.setAttribute('data-comment-id', commentDoc.id); // Adiciona o identificador do comentário
 
                     commentsList.appendChild(commentItem);
                 });
             });
     }
+
 
 
     // Deletar comentário
