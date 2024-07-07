@@ -96,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para exibir perguntas
     function displayQuestions(querySnapshot) {
+        const questionsList = document.getElementById('questions-list');
         questionsList.innerHTML = '';
         querySnapshot.forEach((doc) => {
             const data = doc.data();
@@ -104,31 +105,33 @@ document.addEventListener('DOMContentLoaded', () => {
             // Cabeçalho da pergunta com avatar e nome do usuário
             const questionHeader = document.createElement('div');
             questionHeader.classList.add('question-header');
-            
-            const userContainer = document.createElement('div');
 
             const userAvatar = document.createElement('img');
             userAvatar.src = data.userPhotoURL || 'assets/defaultavatar.jpg'; // Adicione uma imagem padrão caso não tenha um avatar
             userAvatar.alt = `${data.userName}'s avatar`;
             userAvatar.classList.add('user-avatar');
-            
+
             const userName = document.createElement('span');
-            userName.textContent = `${data.userName}`;
+            userName.textContent = data.userName;
             userName.classList.add('user-name');
 
-            const questionText = document.createElement('span');
-            questionText.textContent = `: ${data.question} (${data.category})`;
+            questionHeader.appendChild(userAvatar);
+            questionHeader.appendChild(userName);
 
-            userContainer.appendChild(userAvatar);
-            userContainer.appendChild(userName);
-            userContainer.appendChild(questionText);
-            questionHeader.appendChild(userContainer);
+            listItem.appendChild(questionHeader);
+
+            // Conteúdo da pergunta
+            const questionContent = document.createElement('div');
+            questionContent.classList.add('question-content');
+            questionContent.textContent = `${data.question} (${data.category})`;
+
+            listItem.appendChild(questionContent);
 
             // Adiciona o botão de remoção e edição se o usuário é o dono da pergunta
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
                 const buttonsContainer = document.createElement('div');
                 buttonsContainer.classList.add('question-buttons');
-                
+
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Editar';
                 editButton.classList.add('edit-button');
@@ -149,10 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 buttonsContainer.appendChild(removeButton);
 
-                questionHeader.appendChild(buttonsContainer);
+                listItem.appendChild(buttonsContainer);
             }
-
-            listItem.appendChild(questionHeader);
 
             // Adiciona seção de comentários
             const commentsSection = document.createElement('div');

@@ -25,8 +25,8 @@
             <input type="checkbox" id="theme-toggle">
             <i class="fas fa-moon"></i>
         </div>
-        <form id="question-form" style="display: none;">
-            <input type="text" id="question-input" placeholder="Digite sua pergunta aqui" required>
+        <form id="question-form" style="display: none; flex-direction: column; gap: 10px;">
+            <textarea id="question-input" placeholder="Digite sua pergunta aqui" required></textarea>
             <select id="category-select">
                 <option value="Geral">Geral</option>
                 <option value="Antigo Testamento">Antigo Testamento</option>
@@ -35,7 +35,8 @@
                 <option value="Outros">Outros</option>
             </select>
             <button type="submit">Adicionar Pergunta</button>
-        </form>
+        </form>        
+        
         <h2>Perguntas</h2>
         <select id="filter-select">
             <option value="Todas">Todas</option>

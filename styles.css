@@ -42,19 +42,42 @@ h1 {
 
 form {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
-input[type="text"] {
+textarea {
+    width: 100%;
     flex-grow: 1;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+body.dark-mode textarea {
+    background-color: #555;
+    color: #f5f5f5;
+    border-color: #666;
+}
+
+input[type="text"],
+select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     transition: border-color 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-body.dark-mode input[type="text"] {
+body.dark-mode input[type="text"],
+body.dark-mode select {
     background-color: #555;
     color: #f5f5f5;
     border-color: #666;
@@ -68,6 +91,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: auto;
 }
 
 button:hover {
@@ -112,6 +136,11 @@ body.dark-mode li {
     font-weight: bold;
     margin-right: 5px;
     line-height: 40px; /* Igual à altura do avatar para centralização vertical */
+}
+
+.question-content {
+    margin-top: 10px;
+    margin-left: 50px; /* Alinhado com a margem direita do avatar */
 }
 
 /* Botões de Editar e Remover */
