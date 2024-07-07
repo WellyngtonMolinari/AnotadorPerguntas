@@ -156,36 +156,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 listItem.appendChild(buttonsContainer);
             }
     
-            // Adiciona seção de comentários
-            const commentsSection = document.createElement('div');
-            commentsSection.classList.add('comments-section');
-            const commentsList = document.createElement('ul');
-            const commentInput = document.createElement('input');
-            commentInput.type = 'text';
-            commentInput.placeholder = 'Digite seu comentário';
-            const commentButton = document.createElement('button');
-            commentButton.textContent = 'Comentar';
-            commentButton.classList.add('comment-button');
+            // Adiciona seção de comentários apenas se o usuário estiver logado
+            if (auth.currentUser) {
+                const commentsSection = document.createElement('div');
+                commentsSection.classList.add('comments-section');
+                const commentsList = document.createElement('ul');
+                const commentInput = document.createElement('input');
+                commentInput.type = 'text';
+                commentInput.placeholder = 'Digite seu comentário';
+                const commentButton = document.createElement('button');
+                commentButton.textContent = 'Comentar';
+                commentButton.classList.add('comment-button');
     
-            commentButton.addEventListener('click', () => {
-                const commentText = commentInput.value.trim();
-                if (commentText) {
-                    addCommentToFirestore(doc.id, commentText, auth.currentUser.uid, auth.currentUser.displayName);
-                    commentInput.value = '';
-                }
-            });
+                commentButton.addEventListener('click', () => {
+                    const commentText = commentInput.value.trim();
+                    if (commentText) {
+                        addCommentToFirestore(doc.id, commentText, auth.currentUser.uid, auth.currentUser.displayName);
+                        commentInput.value = '';
+                    }
+                });
     
-            commentsSection.appendChild(commentsList);
-            commentsSection.appendChild(commentInput);
-            commentsSection.appendChild(commentButton);
-            listItem.appendChild(commentsSection);
+                commentsSection.appendChild(commentsList);
+                commentsSection.appendChild(commentInput);
+                commentsSection.appendChild(commentButton);
+                listItem.appendChild(commentsSection);
     
-            // Exibe comentários
-            displayComments(doc.id, commentsList);
+                // Exibe comentários
+                displayComments(doc.id, commentsList);
+            }
     
             questionsList.appendChild(listItem);
         });
     }
+    
     
 
 
