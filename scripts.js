@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             userId: userId,
             userName: userName,
             userPhotoURL: userPhotoURL,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() // Armazenando o timestamp
         }).then(() => {
             console.log('Pergunta adicionada com sucesso!');
         }).catch((error) => {
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         db.collection('questions').doc(docId).update({
             question: newQuestion,
             category: newCategory,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            timestamp: firebase.firestore.FieldValue.serverTimestamp() // Atualizando o timestamp
         }).then(() => {
             console.log('Pergunta atualizada com sucesso!');
         }).catch((error) => {
@@ -254,37 +254,49 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = doc.data();
             const listItem = document.createElement('li');
             listItem.setAttribute('data-doc-id', doc.id); // Adiciona o data-doc-id
-    
-            // Cabeçalho da pergunta com avatar e nome do usuário
+
+            // Cabeçalho da pergunta com avatar, nome do usuário e timestamp
             const questionHeader = document.createElement('div');
             questionHeader.classList.add('question-header');
-    
+
             const userAvatar = document.createElement('img');
             userAvatar.src = data.userPhotoURL || 'assets/defaultavatar.jpg';
             userAvatar.alt = `${data.userName}'s avatar`;
             userAvatar.classList.add('user-avatar');
-    
+
             const userName = document.createElement('span');
             userName.textContent = data.userName;
             userName.classList.add('user-name');
-    
+
+            // Recuperar e formatar o timestamp
+            let timestampFormatted = 'Data não disponível';
+            if (data.timestamp) {
+                const date = data.timestamp.toDate();
+                timestampFormatted = date.toLocaleString(); // Formata a data e hora para uma string legível
+            }
+            const questionTimestamp = document.createElement('span');
+            questionTimestamp.textContent = timestampFormatted;
+            questionTimestamp.classList.add('question-timestamp');
+
+            // Adicionar avatar, nome do usuário e timestamp ao cabeçalho
             questionHeader.appendChild(userAvatar);
             questionHeader.appendChild(userName);
-    
+            questionHeader.appendChild(questionTimestamp);
+
             listItem.appendChild(questionHeader);
-    
+
             // Conteúdo da pergunta
             const questionContent = document.createElement('div');
             questionContent.classList.add('question-content');
             questionContent.textContent = `${data.question} (${data.category})`;
-    
+
             listItem.appendChild(questionContent);
-    
+
             // Adiciona o botão de remoção e edição se o usuário é o dono da pergunta
             if (auth.currentUser && auth.currentUser.uid === data.userId) {
                 const buttonsContainer = document.createElement('div');
                 buttonsContainer.classList.add('question-buttons');
-    
+
                 const editButton = document.createElement('button');
                 editButton.textContent = 'Editar';
                 editButton.classList.add('edit-button');
@@ -292,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     showEditForm(doc.id, data.question, data.category);
                 });
                 buttonsContainer.appendChild(editButton);
-    
+
                 const removeButton = document.createElement('button');
                 removeButton.textContent = 'Remover';
                 removeButton.classList.add('remove-button');
@@ -304,10 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
                 buttonsContainer.appendChild(removeButton);
-    
+
                 listItem.appendChild(buttonsContainer);
             }
-    
+
             // Adiciona seção de comentários apenas se o usuário estiver logado
             if (auth.currentUser) {
                 const commentsSection = document.createElement('div');
@@ -324,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const commentButton = document.createElement('button');
                 commentButton.textContent = 'Comentar';
                 commentButton.classList.add('comment-button');
-    
+
                 // Dentro da função de adição de comentário
                 commentButton.addEventListener('click', () => {
                     const commentText = commentInput.value.trim();
@@ -339,14 +351,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 commentsSection.appendChild(commentInput);
                 commentsSection.appendChild(commentButton);
                 listItem.appendChild(commentsSection);
-    
+
                 // Exibe comentários
                 displayComments(doc.id, commentsList);
             }
-    
+
             questionsList.appendChild(listItem);
         });
     }
+
     
     
 

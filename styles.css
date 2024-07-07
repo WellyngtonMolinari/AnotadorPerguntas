@@ -143,6 +143,15 @@ body.dark-mode li {
     margin-left: 50px; /* Alinhado com a margem direita do avatar */
 }
 
+.question-timestamp {
+    font-size: 0.9em; /* Tamanho da fonte menor */
+    color: #777; /* Cor cinza clara para distinção */
+}
+
+.question-text {
+    margin: 5px 0;
+}
+
 /* Botões de Editar e Remover */
 .question-buttons {
     display: flex;
