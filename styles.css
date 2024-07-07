@@ -225,6 +225,56 @@ body.dark-mode li {
     margin-bottom: 5px; /* Espaço entre o cabeçalho e o texto do comentário */
 }
 
+/* Estilo para o textarea do formulário de edição */
+.edit-comment-form textarea {
+    width: 100%;
+    min-height: 50px; /* Altura mínima */
+    max-height: 300px; /* Altura máxima */
+    resize: none; /* Impede o redimensionamento manual */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    overflow: hidden; /* Oculta a barra de rolagem */
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+body.dark-mode .edit-comment-form textarea {
+    background-color: #555;
+    color: #f5f5f5;
+    border-color: #666;
+}
+
+/* Estilo adicional para o formulário de edição */
+.edit-comment-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.edit-comment-form button {
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.edit-comment-form button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.edit-comment-form button[type="button"] {
+    background-color: #f44336;
+}
+
+.edit-comment-form button[type="button"]:hover {
+    background-color: #e53935;
+}
+
+
 .comment-avatar {
     width: 35px;
     height: 35px;

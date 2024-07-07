@@ -181,44 +181,57 @@ document.addEventListener('DOMContentLoaded', () => {
     function showEditCommentForm(docId, commentId, currentComment) {
         // Localizar o item da lista de comentários
         const commentItem = document.querySelector(`li[data-comment-id="${commentId}"]`);
-    
+
         if (commentItem) {
             // Criar formulário de edição
             const editForm = document.createElement('form');
-            const editCommentInput = document.createElement('input');
-            editCommentInput.type = 'text';
-            editCommentInput.value = currentComment;
-    
+            editForm.classList.add('edit-comment-form');
+
+            const editCommentTextarea = document.createElement('textarea');
+            editCommentTextarea.value = currentComment;
+            editCommentTextarea.rows = 4; // Número inicial de linhas
+
+            // Ajustar dinamicamente a altura do textarea conforme o conteúdo
+            editCommentTextarea.addEventListener('input', () => {
+                editCommentTextarea.style.height = 'auto'; // Redefine para auto para calcular a altura necessária
+                editCommentTextarea.style.height = (editCommentTextarea.scrollHeight) + 'px'; // Ajusta a altura com base no scrollHeight
+            });
+
             const saveButton = document.createElement('button');
             saveButton.type = 'submit';
             saveButton.textContent = 'Salvar';
-    
+
             const cancelButton = document.createElement('button');
             cancelButton.type = 'button';
             cancelButton.textContent = 'Cancelar';
             cancelButton.addEventListener('click', () => {
                 displayComments(docId, commentItem.parentElement); // Recarrega os comentários para restaurar a exibição original
             });
-    
-            editForm.appendChild(editCommentInput);
+
+            editForm.appendChild(editCommentTextarea);
             editForm.appendChild(saveButton);
             editForm.appendChild(cancelButton);
-    
-            // Substituir o conteúdo atual do item pelo formulário de edição
+
+            // Limpar o conteúdo atual do item de comentário e adicionar o formulário de edição
             commentItem.innerHTML = '';
             commentItem.appendChild(editForm);
-    
-            // Submeter a atualização do comentário
+
+            // Focar no textarea e ajustar sua altura
+            editCommentTextarea.focus();
+            editCommentTextarea.style.height = 'auto';
+            editCommentTextarea.style.height = (editCommentTextarea.scrollHeight) + 'px';
+
+            // Salvar as mudanças ao enviar o formulário
             editForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const newComment = editCommentInput.value.trim();
-    
-                if (newComment) {
-                    updateCommentInFirestore(docId, commentId, newComment);
+                const updatedComment = editCommentTextarea.value.trim();
+                if (updatedComment) {
+                    updateCommentInFirestore(docId, commentId, updatedComment);
                 }
             });
         }
     }
+
 
     // Função para Atualizar Comentários no Firestore
     function updateCommentInFirestore(docId, commentId, newComment) {
