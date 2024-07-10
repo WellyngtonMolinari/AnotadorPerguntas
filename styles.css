@@ -140,18 +140,14 @@ body.dark-mode li {
 .question-content, .comment-text {
     margin-top: 10px;
     margin-left: 50px;
+    font-size: 1em;
+    line-height: 1.4;
+    color: #444;
 }
 
 .question-timestamp, .comment-timestamp {
     font-size: 0.9em;
     color: #777;
-}
-
-.comment-text {
-    font-size: 1em;
-    line-height: 1.4;
-    color: #444;
-    padding-left: 45px;
 }
 
 .question-text, .comment-text {
