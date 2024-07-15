@@ -1,4 +1,5 @@
 # Sistema de Perguntas e Comentários para Grupo de Estudos Bíblicos
+![image](https://github.com/user-attachments/assets/0029b553-6d80-48bc-90a6-13aca7ff70de)
 
 Bem-vindo ao Sistema de Perguntas e Comentários para o seu grupo de estudos bíblicos! Este projeto foi desenvolvido para facilitar a interação entre os membros, permitindo que façam perguntas, adicionem comentários e compartilhem conhecimentos sobre diferentes tópicos bíblicos.
 
