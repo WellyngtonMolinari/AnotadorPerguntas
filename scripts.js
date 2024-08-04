@@ -164,8 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-
-
     // Deletar comentário
     function deleteCommentFromFirestore(docId, commentId) {
         db.collection('questions').doc(docId).collection('comments').doc(commentId).delete()
@@ -232,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     // Função para Atualizar Comentários no Firestore
     function updateCommentInFirestore(docId, commentId, newComment) {
         db.collection('questions').doc(docId).collection('comments').doc(commentId).update({
@@ -244,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro ao atualizar comentário: ', error);
         });
     }
-    
 
     // Função para exibir perguntas
     function displayQuestions(querySnapshot) {
@@ -360,10 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    
-    
-
-
     // Função para mostrar o formulário de edição
     function showEditForm(docId, currentQuestion, currentCategory) {
         const editForm = document.createElement('form');
@@ -417,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
 
     // Carregar perguntas do Firestore e aplicar filtro
     function loadQuestions(categoryFilter = 'Todas') {
